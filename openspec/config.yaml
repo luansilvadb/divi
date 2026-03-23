@@ -1,0 +1,32 @@
+schema: spec-driven
+
+context: "Projeto 'Divi' (Controle Financeiro) baseado no Quasar Framework, Vue 3 Composition API, TypeScript, Pinia, Supabase e Vite, seguindo rigorosos padrões de Clean Architecture + DDD + Atomic Design (Língua: pt-BR)."
+
+guardrails_architecture:
+  paradigm: Clean Architecture + DDD
+  constraints:
+    - "OBRIGATÓRIO: Isolar Supabase da UI. Usar Anti-Corruption Layer (Services/Interfaces)."
+    - "OBRIGATÓRIO: Inversão de Controle (IoC). Injetar dependências via 'provide/inject' ou Factories. NUNCA instanciar com 'new' na UI."
+    - "LIMITE: Máximo 150 linhas por arquivo TypeScript (SRP estrito)."
+
+guardrails_ui_gestalt:
+  methodology: Atomic Design
+  constraints:
+    - "PROIBIDO: CSS inline arbitrário ou valores mágicos (ex: padding: 15px)."
+    - "OBRIGATÓRIO: Usar APENAS Design Tokens/Variáveis do Quasar ($primary, $space-md) para garantir Proximidade/Similaridade (Flyweight Pattern)."
+    - "OBRIGATÓRIO: Construir Organismos apenas compondo Átomos e Moléculas validadas (Composite Pattern)."
+
+patterns_mapping:
+  Abstract_Factory: "Geração de componentes dinâmicos de UI via Design System."
+  Builder: "Construção de layouts complexos orientados a dados."
+  Facade: "Serviços de comunicação com Pinia e Supabase."
+  Proxy: "Validação de estado/auth antes de renderizar UI pesada."
+  Strategy: "Algoritmos de geração visual (ex: Simetria vs Proximidade)."
+  Chain_of_Responsibility: "Pipeline sequencial de validação das leis da Gestalt na UI gerada."
+  Visitor: "Inspeção da árvore Vue dinâmica para validação matemática."
+  Memento: "Snapshot do Pinia para Rollback de UI gerada inválida."
+
+agent_directives:
+  - "TDD_FIRST: Escrever o contrato de teste antes da lógica visual."
+  - "QUASAR_NATIVE: Usar estritamente componentes 'q-*'. Proibido alucinar bibliotecas externas de UI."
+  - "TEMPLATE_METHOD: Padronizar esqueletos de componentes (setup, computed)."
