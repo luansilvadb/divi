@@ -37,7 +37,16 @@
             class="theme-mode-item"
           >
             <template #side>
-              <ThemeModeSelector v-model="themeMode" />
+              <BaseSelect
+                v-model="themeMode"
+                :options="[
+                  { label: 'Claro', value: 'light' },
+                  { label: 'Escuro', value: 'dark' },
+                  { label: 'Sistema', value: 'auto' },
+                ]"
+                emit-value
+                map-options
+              />
             </template>
           </SettingsItem>
         </div>
@@ -60,12 +69,12 @@
             </template>
           </SettingsItem>
           <div class="relative-position full-width" style="min-height: 64px">
-            <Motion 
-              as="div" 
-              layoutId="settings-hero-bg" 
+            <Motion
+              as="div"
+              layoutId="settings-hero-bg"
               :transition="{ type: 'spring', stiffness: 300, damping: 30 }"
-              class="absolute-full settings-expansion-bg" 
-              style="border-radius: 12px; z-index: 0" 
+              class="absolute-full settings-expansion-bg"
+              style="border-radius: 12px; z-index: 0"
             />
             <Motion
               as="div"
@@ -81,12 +90,21 @@
                 style="background: transparent !important"
               >
                 <template #title>
-                  <Motion as="div" layoutId="settings-hero-title" :transition="{ type: 'spring', stiffness: 300, damping: 30 }" class="text-subtitle2 text-weight-bold text-grey-9 dark-text-white">
+                  <Motion
+                    as="div"
+                    layoutId="settings-hero-title"
+                    :transition="{ type: 'spring', stiffness: 300, damping: 30 }"
+                    class="text-subtitle2 text-weight-bold text-grey-9 dark-text-white"
+                  >
                     Mais opções
                   </Motion>
                 </template>
                 <template #icon>
-                  <Motion as="div" layoutId="settings-hero-icon" :transition="{ type: 'spring', stiffness: 300, damping: 30 }">
+                  <Motion
+                    as="div"
+                    layoutId="settings-hero-icon"
+                    :transition="{ type: 'spring', stiffness: 300, damping: 30 }"
+                  >
                     <q-icon name="tune" color="grey-7" size="sm" />
                   </Motion>
                 </template>
@@ -165,7 +183,7 @@ import SettingsItem from 'src/components/molecules/SettingsItem.vue';
 import ColorPickerBottomSheet from 'src/components/molecules/ColorPickerBottomSheet.vue';
 import CustomColorPickerBottomSheet from 'src/components/molecules/CustomColorPickerBottomSheet.vue';
 import LanguageBottomSheet from 'src/components/molecules/LanguageBottomSheet.vue';
-import ThemeModeSelector from 'src/components/molecules/ThemeModeSelector.vue';
+import BaseSelect from 'src/components/atoms/BaseSelect.vue';
 import { storeToRefs } from 'pinia';
 import { Motion } from 'motion-v';
 
@@ -205,7 +223,7 @@ const currentLanguageLabel = computed(() => {
 .settings-expansion-bg {
   background: white;
   border: 1px solid #f2f2f2;
-  
+
   body.body--dark & {
     background: #1e1e1e;
     border-color: #333;

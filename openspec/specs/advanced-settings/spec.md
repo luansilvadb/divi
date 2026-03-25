@@ -29,6 +29,13 @@ Define the functional and behavioral requirements for the new "Advanced Settings
   - `Aumentar o contraste de texto`: Toggle
   - `Resumo dos gastos mensais`: Toggle
 
+### Requirement: Dropdown Menu Aesthetics
+- **GIVEN** a Select component is active (opened)
+- **WHEN** the user interacts with the control
+- **THEN** the dropdown menu MUST align with the trigger's rounded design language (12px radius)
+- **AND** it MUST feature glassmorphism (translucency + blur) to match the "premium" system design.
+- **AND** the menu items MUST have internal padding and rounded corners (8px) for a modern, cleaner appearance.
+
 ### Requirement: Back Navigation
 - **GIVEN** the user is on the Advanced Settings page
 - **WHEN** the user clicks the back button (Top-Left) OR presses the system back button

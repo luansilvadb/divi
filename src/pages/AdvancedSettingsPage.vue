@@ -12,28 +12,40 @@
     />
 
     <!-- O surface que expande (Hero) - OVERFLOW VISIBLE para não cortar -->
-    <Motion 
-      as="div" 
-      layoutId="settings-hero-bg" 
+    <Motion
+      as="div"
+      layoutId="settings-hero-bg"
       :transition="{ type: 'spring', stiffness: 300, damping: 30 }"
       class="full-expansion-card absolute-full"
       style="overflow: visible !important"
     >
       <div class="full-height full-width flex flex-column no-scroll-clipping">
         <!-- SliverAppBar Integrado - Forçado overflow visible -->
-        <SliverAppBar :expanded-height="130" :collapsed-height="56" pinned class="settings-sliver-bar">
+        <SliverAppBar
+          :expanded-height="130"
+          :collapsed-height="56"
+          pinned
+          :scroll-target="scrollContainerRef"
+          class="settings-sliver-bar"
+        >
           <template #navigation>
-            <Motion as="div" layoutId="settings-hero-icon" layout="position" :transition="{ type: 'spring', stiffness: 300, damping: 30 }" class="inline-block back-btn-layer">
+            <Motion
+              as="div"
+              :initial="{ opacity: 0, y: 20 }"
+              :animate="{ opacity: 1, y: 0 }"
+              :transition="{ delay: 0.05, type: 'spring' }"
+              class="inline-block back-btn-layer"
+            >
               <q-btn flat round icon="arrow_back" color="grey-9" @click="goBack" class="back-btn" />
             </Motion>
           </template>
-          
+
           <template #title>
-            <Motion 
-              as="div" 
-              layoutId="settings-hero-title" 
-              layout="position"
-              :transition="{ type: 'spring', stiffness: 300, damping: 30 }"
+            <Motion
+              as="div"
+              :initial="{ opacity: 0, y: 20 }"
+              :animate="{ opacity: 1, y: 0 }"
+              :transition="{ delay: 0.1, type: 'spring' }"
               class="text-h5 text-weight-bolder hero-title no-transform-clash"
             >
               Mais
@@ -41,12 +53,19 @@
           </template>
 
           <template #actions>
-            <q-btn flat round icon="help_outline" color="grey-7" />
+            <Motion
+              as="div"
+              :initial="{ opacity: 0, y: 20 }"
+              :animate="{ opacity: 1, y: 0 }"
+              :transition="{ delay: 0.15, type: 'spring' }"
+            >
+              <q-btn flat round icon="help_outline" color="grey-7" />
+            </Motion>
           </template>
         </SliverAppBar>
 
         <!-- Conteúdo Interno -->
-        <div class="scroll-container q-px-md q-pb-xl custom-scroll">
+        <div ref="scrollContainerRef" class="scroll-container q-px-md q-pb-xl custom-scroll">
           <div class="settings-content-wrapper">
             <div class="settings-sections">
               <Motion
@@ -62,7 +81,10 @@
                       <q-icon name="view_agenda" size="sm" color="blue-8" class="q-mr-md" />
                       <div class="item-label text-weight-bold">Altura do cabeçalho</div>
                     </div>
-                    <q-select dense borderless v-model="alturaCabecalho" :options="['Alto', 'Médio', 'Baixo']" class="custom-select" />
+                    <BaseSelect
+                      v-model="alturaCabecalho"
+                      :options="['Alto', 'Médio', 'Baixo']"
+                    />
                   </div>
 
                   <div class="q-px-md q-py-sm settings-item-row">
@@ -70,7 +92,11 @@
                       <q-icon name="star" size="sm" color="blue-8" class="q-mr-md" />
                       <div class="item-label text-weight-bold">Estilo de ícone</div>
                     </div>
-                    <q-select dense borderless v-model="estiloIcone" :options="['Arredondado', 'Vazado', 'Preenchido']" class="custom-select" />
+                    <BaseSelect
+                      v-model="estiloIcone"
+                      :options="['Arredondado', 'Vazado', 'Preenchido']"
+                      menu-padding-top="4px"
+                    />
                   </div>
                 </div>
               </Motion>
@@ -106,6 +132,7 @@ import { useRouter } from 'vue-router';
 import { useUiStore } from 'src/stores/ui';
 import { Motion } from 'motion-v';
 import SliverAppBar from 'components/molecules/SliverAppBar.vue';
+import BaseSelect from 'components/atoms/BaseSelect.vue';
 
 const router = useRouter();
 const uiStore = useUiStore();
@@ -113,6 +140,8 @@ const uiStore = useUiStore();
 const alturaCabecalho = ref('Médio');
 const estiloIcone = ref('Arredondado');
 const autoPagamento = ref(true);
+
+const scrollContainerRef = ref<HTMLElement | null>(null);
 
 const goBack = () => {
   uiStore.setNavDirection('backward');
@@ -146,7 +175,7 @@ const goBack = () => {
   width: 100%;
   height: 100%;
   background: #fafafa;
-  
+
   body.body--dark & {
     background: #121212;
   }
@@ -160,7 +189,9 @@ const goBack = () => {
 .custom-scroll {
   height: 100%;
   scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .settings-content-wrapper {
@@ -175,21 +206,22 @@ const goBack = () => {
     overflow: visible !important;
     clip-path: none !important;
   }
-  
+
   :deep(.sliver-title-wrapper) {
     justify-content: flex-start !important;
     padding-left: 64px;
     padding-top: 10px;
     overflow: visible !important;
   }
-  
+
   :deep(.sliver-title) {
     transform: none !important;
     opacity: 1 !important;
     overflow: visible !important;
   }
 
-  :deep(.sliver-bg-base), :deep(.sliver-bg-overlay) {
+  :deep(.sliver-bg-base),
+  :deep(.sliver-bg-overlay) {
     background: transparent !important;
   }
 }
@@ -201,7 +233,9 @@ const goBack = () => {
 
 .hero-title {
   color: #1a237e;
-  body.body--dark & { color: white; }
+  body.body--dark & {
+    color: white;
+  }
   white-space: nowrap;
   z-index: 90;
 }
@@ -215,11 +249,11 @@ const goBack = () => {
 .section-card {
   background: white;
   border-radius: 20px;
-  border: 1px solid rgba(0,0,0,0.03);
+  border: 1px solid rgba(0, 0, 0, 0.03);
 
   body.body--dark & {
     background: #1e1e1e;
-    border-color: rgba(255,255,255,0.05);
+    border-color: rgba(255, 255, 255, 0.05);
   }
 }
 
@@ -228,25 +262,17 @@ const goBack = () => {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  body.body--dark & { border-bottom-color: rgba(255,255,255,0.05); }
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  body.body--dark & {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+  }
 }
 
 .item-label {
   font-size: 1rem;
   color: #333;
-  body.body--dark & { color: #eee; }
-}
-
-.custom-select {
-  background: #f0f2f5;
-  border-radius: 12px;
-  min-width: 120px;
-  padding: 4px 12px;
-  :deep(.q-field__native) { font-weight: 600; color: var(--q-primary); }
   body.body--dark & {
-    background: #2a2a2a;
-    :deep(.q-field__native) { color: white; }
+    color: #eee;
   }
 }
 </style>

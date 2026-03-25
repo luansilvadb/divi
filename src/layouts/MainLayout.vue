@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf" class="main-layout-bg">
     <DesktopSidebar />
 
-    <q-page-container class="overflow-hidden relative-position">
+    <q-page-container class="relative-position">
       <router-view v-slot="{ Component, route }">
         <AnimatePresence mode="popLayout">
           <motion.div
@@ -73,12 +73,10 @@ body.body--dark .main-layout-bg {
 .motion-wrapper {
   width: 100%;
   height: 100%;
-  will-change: transform, opacity;
   background: inherit;
 }
 
 .q-page-container {
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
 }

@@ -6,18 +6,21 @@ interface Props {
   expandedHeight?: number;
   collapsedHeight?: number;
   pinned?: boolean;
+  scrollTarget?: HTMLElement | Window | undefined | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   expandedHeight: 160,
   collapsedHeight: 56,
   pinned: true,
+  scrollTarget: undefined,
 });
 
 const { visualOffset, progress, diff } = useSliverEffect({
   expandedHeight: computed(() => props.expandedHeight),
   collapsedHeight: computed(() => props.collapsedHeight),
-  pinned: computed(() => props.pinned)
+  pinned: computed(() => props.pinned),
+  scrollTarget: computed(() => props.scrollTarget)
 });
 
 // Calculate styles for the main container
