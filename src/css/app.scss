@@ -7,15 +7,15 @@
   --md3-thumb-size: 16px;
   --md3-thumb-active-size: 24px;
   
-  // Default values using dynamic variables with fallbacks
-  --md3-color-outline: var(--md-sys-color-outline, #757575);
-  --md3-color-surface-variant: var(--md-sys-color-surface-variant, transparent);
-  --md3-color-on-surface-variant: var(--md-sys-color-on-surface-variant, #757575);
+  // Default values with fallbacks
+  --md3-color-outline: #757575;
+  --md3-color-surface-variant: transparent;
+  --md3-color-on-surface-variant: #757575;
   
-  --md3-color-primary: var(--md-sys-color-primary, #1976D2);
-  --md3-color-on-primary: var(--md-sys-color-on-primary, white);
-  --md3-color-primary-container: var(--md-sys-color-primary-container, #1976D2);
-  --md3-color-on-primary-container: var(--md-sys-color-on-primary-container, white);
+  --md3-color-primary: #1976D2;
+  --md3-color-on-primary: white;
+  --md3-color-primary-container: #1976D2;
+  --md3-color-on-primary-container: white;
 }
 
 .q-toggle__inner {
@@ -83,16 +83,38 @@
   }
 }
 
-/* Dark Mode Overrides for Inactive state when not using dynamic vars */
+/* Modern, Thin Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* Dark Mode Overrides */
 body.body--dark {
-  .q-toggle__inner:not(.q-toggle__inner--truthy) {
-    &:not([style*="--md-sys-color-"]) {
-        .q-toggle__track {
-            border-color: #aaaaaa !important;
-        }
-        .q-toggle__thumb {
-            background-color: #aaaaaa !important;
-        }
+  .q-toggle {
+    --md3-color-outline: #aaaaaa;
+    --md3-color-on-surface-variant: #aaaaaa;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
   }
 }

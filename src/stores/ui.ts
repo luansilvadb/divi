@@ -1,45 +1,44 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { setCssVar, LocalStorage } from 'quasar';
-import { generateThemeFromHex, type DynamicScheme } from 'src/core/utils/theme';
 
 export const useUiStore = defineStore('ui', {
   state: () => ({
     isSidebarMini: false,
     activeTab: 'home',
-    themeMode: 'auto' as 'light' | 'dark' | 'auto',
-    materialYou: LocalStorage.getItem('materialYou') === 'true',
-    accentColor: LocalStorage.getItem('accentColor') as string || '#1976D2',
-    dynamicTheme: null as { light: DynamicScheme; dark: DynamicScheme } | null,
+    themeMode: (LocalStorage.getItem('themeMode') as 'light' | 'dark' | 'auto') || 'auto',
+    accentColor: (LocalStorage.getItem('accentColor') as string) || '#1976D2',
+    locale: (LocalStorage.getItem('locale') as string) || 'auto',
+    navDirection: 'forward' as 'forward' | 'backward',
   }),
 
   actions: {
     toggleSidebar() {
       this.isSidebarMini = !this.isSidebarMini;
     },
+
     setSidebarMini(val: boolean) {
       this.isSidebarMini = val;
     },
+
     setThemeMode(mode: 'light' | 'dark' | 'auto') {
       this.themeMode = mode;
+      LocalStorage.set('themeMode', mode);
     },
-    setMaterialYou(val: boolean) {
-      this.materialYou = val;
-      LocalStorage.set('materialYou', val.toString());
-      this.refreshDynamicTheme();
-    },
+
     setAccentColor(color: string) {
       this.accentColor = color;
       setCssVar('primary', color);
       LocalStorage.set('accentColor', color);
-      this.refreshDynamicTheme();
     },
-    refreshDynamicTheme() {
-      if (this.materialYou) {
-        this.dynamicTheme = generateThemeFromHex(this.accentColor);
-      } else {
-        this.dynamicTheme = null;
-      }
-    }
+
+    setLocale(locale: string) {
+      this.locale = locale;
+      LocalStorage.set('locale', locale);
+    },
+    
+    setNavDirection(dir: 'forward' | 'backward') {
+      this.navDirection = dir;
+    },
   },
 });
 

@@ -1,8 +1,10 @@
 <template>
   <div class="settings-item-container">
     <q-item :clickable="clickable" v-ripple="clickable" class="settings-item q-py-sm">
-      <q-item-section avatar v-if="icon" class="q-pr-sm min-width-avatar">
-        <q-icon :name="icon" color="grey-7" size="sm" />
+      <q-item-section avatar v-if="icon || $slots.icon" class="q-pr-sm min-width-avatar">
+        <slot name="icon">
+          <q-icon :name="icon" color="grey-7" size="sm" />
+        </slot>
       </q-item-section>
       
       <q-item-section>
