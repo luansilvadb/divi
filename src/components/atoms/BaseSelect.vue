@@ -1,5 +1,6 @@
 <template>
   <q-select
+    ref="selectProxy"
     transition-show="none"
     transition-hide="none"
     dense
@@ -9,8 +10,8 @@
     @update:model-value="$emit('update:modelValue', $event)"
     :options="options"
     :class="['custom-select', { 'menu-open': menuOpen }]"
-    @popup-show="menuOpen = true"
-    @popup-hide="menuOpen = false"
+    @popup-show="onPopupShow"
+    @popup-hide="onPopupHide"
     menu-anchor="bottom left"
     menu-self="top left"
     popup-content-class="custom-select-menu"
@@ -26,7 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onUnmounted } from 'vue';
+import { QSelect } from 'quasar';
 
 interface Props {
   modelValue: string | number | Record<string, unknown> | null;
@@ -43,6 +45,29 @@ withDefaults(defineProps<Props>(), {
 defineEmits(['update:modelValue']);
 
 const menuOpen = ref(false);
+const selectProxy = ref<QSelect | null>(null);
+
+const handleScroll = () => {
+  if (menuOpen.value && selectProxy.value) {
+    selectProxy.value.hidePopup();
+  }
+};
+
+const onPopupShow = () => {
+  menuOpen.value = true;
+  // Usar listener global com captura para detectar scroll em QUALQUER container pai
+  // Isso é necessário porque o getScrollTarget nem sempre identifica containers customizados
+  window.addEventListener('scroll', handleScroll, { capture: true, passive: true });
+};
+
+const onPopupHide = () => {
+  menuOpen.value = false;
+  window.removeEventListener('scroll', handleScroll, { capture: true });
+};
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll, { capture: true });
+});
 </script>
 
 <style scoped lang="scss">
@@ -97,10 +122,25 @@ const menuOpen = ref(false);
     border-radius: 8px;
     margin: 2px 4px;
     font-weight: 600;
+    transition:
+      background 0.2s ease,
+      color 0.1s ease;
+    min-height: 40px;
+
+    &:hover,
+    &.q-item--focused {
+      background: #f0f2f5;
+      color: var(--q-primary);
+
+      body.body--dark & {
+        background: #2a2a2a;
+        color: white;
+      }
+    }
 
     &.q-item--active {
-      background: #2a2a2a;
-      color: white;
+      background: #f0f2f5;
+      color: var(--q-primary);
 
       body.body--dark & {
         background: #2a2a2a;

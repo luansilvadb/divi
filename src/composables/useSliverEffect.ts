@@ -6,10 +6,37 @@ interface UseSliverEffectOptions {
   collapsedHeight: MaybeRef<number>;
   pinned: MaybeRef<boolean>;
   scrollTarget?: MaybeRef<HTMLElement | Window | undefined | null>;
+  rootRef?: MaybeRef<HTMLElement | undefined | null>;
+}
+
+function findScrollParent(el: HTMLElement | null): HTMLElement | Window {
+  if (!el) return window;
+  
+  let parent = el.parentElement;
+  while (parent) {
+    const style = window.getComputedStyle(parent);
+    const overflowY = style.overflowY;
+    const overflow = style.overflow;
+
+    if (
+      overflowY === 'auto' || 
+      overflowY === 'scroll' || 
+      overflowY === 'overlay' ||
+      overflow === 'auto' || 
+      overflow === 'scroll' || 
+      overflow === 'overlay'
+    ) {
+      return parent;
+    }
+    parent = parent.parentElement;
+  }
+  
+  return window;
 }
 
 export function useSliverEffect(options: UseSliverEffectOptions) {
   const scrollY = ref(0);
+  const detectedTarget = ref<HTMLElement | Window | null>(null);
   let ticking = false;
   
   const expanded = computed(() => unref(options.expandedHeight));
@@ -18,7 +45,7 @@ export function useSliverEffect(options: UseSliverEffectOptions) {
 
   const diff = computed(() => expanded.value - collapsed.value);
 
-  const getTarget = () => unref(options.scrollTarget) || window;
+  const getTarget = () => unref(options.scrollTarget) || detectedTarget.value || window;
 
   const updateScroll = () => {
     const target = getTarget();
@@ -54,13 +81,20 @@ export function useSliverEffect(options: UseSliverEffectOptions) {
     }
   };
 
-  onMounted(() => {
+  const detectAndBind = () => {
+    if (!unref(options.scrollTarget) && unref(options.rootRef)) {
+      detectedTarget.value = findScrollParent(unref(options.rootRef) as HTMLElement);
+    }
     bindEvent();
+  };
+
+  onMounted(() => {
+    detectAndBind();
   });
 
-  watch(() => unref(options.scrollTarget), () => {
-    bindEvent();
-  });
+  watch([() => unref(options.scrollTarget), () => unref(options.rootRef)], () => {
+    detectAndBind();
+  }, { immediate: true });
 
   onUnmounted(() => {
     if (currentTarget) {
@@ -69,9 +103,12 @@ export function useSliverEffect(options: UseSliverEffectOptions) {
   });
 
   const visualOffset = computed(() => {
+    // Se estiver fixado (pinned), o deslocamento visual é limitado pela diferença entre a altura expandida e a altura colapsada.
+    // Isso garante que a barra pare de encolher ao atingir collapsedHeight e permaneça visível.
     if (isPinned.value) {
       return Math.min(diff.value, Math.max(0, scrollY.value));
     }
+    // Se não estiver fixado, ela simplesmente sobe conforme o scroll.
     return Math.max(0, scrollY.value);
   });
 

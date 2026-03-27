@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useSliverEffect } from 'src/composables/useSliverEffect';
 
 interface Props {
@@ -7,6 +7,8 @@ interface Props {
   collapsedHeight?: number;
   pinned?: boolean;
   scrollTarget?: HTMLElement | Window | undefined | null;
+  showSpacer?: boolean;
+  backButton?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -14,29 +16,48 @@ const props = withDefaults(defineProps<Props>(), {
   collapsedHeight: 56,
   pinned: true,
   scrollTarget: undefined,
+  showSpacer: true,
+  backButton: false,
 });
+
+const emit = defineEmits(['back']);
+
+defineOptions({
+  inheritAttrs: false
+});
+
+const rootRef = ref<HTMLElement | null>(null);
 
 const { visualOffset, progress, diff } = useSliverEffect({
   expandedHeight: computed(() => props.expandedHeight),
   collapsedHeight: computed(() => props.collapsedHeight),
   pinned: computed(() => props.pinned),
-  scrollTarget: computed(() => props.scrollTarget)
+  scrollTarget: computed(() => props.scrollTarget),
+  rootRef
 });
 
 // Calculate styles for the main container
-const containerStyles = computed(() => ({
-  height: `${props.expandedHeight}px`,
-  marginBottom: `-${props.expandedHeight}px`,
-  '--sliver-p': progress.value,
-  '--sliver-offset': `${visualOffset.value}px`,
-  '--sliver-diff': `${diff.value}px`,
-  '--sliver-expanded': `${props.expandedHeight}px`,
-  '--sliver-collapsed': `${props.collapsedHeight}px`,
-}));
+const containerStyles = computed(() => {
+  const isPinned = props.pinned;
+  const position: 'sticky' | 'relative' = isPinned ? 'sticky' : 'relative';
+  const top: string | undefined = isPinned ? '0' : undefined;
+  
+  return {
+    height: `${props.expandedHeight}px`,
+    marginBottom: `-${props.expandedHeight}px`,
+    position,
+    top,
+    '--sliver-p': progress.value,
+    '--sliver-offset': `${visualOffset.value}px`,
+    '--sliver-diff': `${diff.value}px`,
+    '--sliver-expanded': `${props.expandedHeight}px`,
+    '--sliver-collapsed': `${props.collapsedHeight}px`,
+  };
+});
 </script>
 
 <template>
-  <div class="sliver-app-bar" :style="containerStyles">
+  <div ref="rootRef" class="sliver-app-bar" :style="containerStyles" v-bind="$attrs">
     <!-- Shadow: Aparece conforme colapsa -->
     <div class="sliver-shadow"></div>
 
@@ -58,7 +79,17 @@ const containerStyles = computed(() => ({
           
           <!-- Header (Navigation e Actions) -->
           <div class="sliver-header-row">
-            <div class="sliver-nav"><slot name="navigation" :progress="progress"></slot></div>
+            <div class="sliver-nav">
+              <q-btn
+                v-if="backButton"
+                flat
+                round
+                icon="arrow_back"
+                class="q-ma-xs"
+                @click="emit('back')"
+              />
+              <slot name="navigation" :progress="progress"></slot>
+            </div>
             <q-space />
             <div class="sliver-actions"><slot name="actions" :progress="progress"></slot></div>
           </div>
@@ -75,7 +106,7 @@ const containerStyles = computed(() => ({
     </div>
   </div>
   
-  <div :style="{ height: `${expandedHeight}px` }" class="sliver-spacer"></div>
+  <div v-if="showSpacer" :style="{ height: `${expandedHeight}px` }" class="sliver-spacer"></div>
 </template>
 
 <style scoped lang="scss">

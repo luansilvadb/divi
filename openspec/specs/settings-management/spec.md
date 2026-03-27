@@ -126,12 +126,31 @@ A página de configurações ("Mais ações") DEVE ter uma largura de contêiner
 Os itens de configuração (SettingsItem) DEVEM ter uma altura mínima maior para melhorar a interatividade e a clareza visual.
 
 - **WHEN** um `SettingsItem` é renderizado.
-- **THEN** ele DEVE ter uma altura mínima (`min-height`) de 60px.
+- **THEN** ele DEVE tener uma altura mínima (`min-height`) de 60px.
 
 #### Scenario: Renderizando Item de Configuração
 
 - **WHEN** o componente `SettingsItem` é montado na tela.
 - **THEN** ele deve ocupar no mínimo 60px de altura vertical, independentemente do conteúdo interno.
+
+### Requirement: Interactive State Feedback
+
+- **GIVEN** a `SettingsItem` with `:clickable="true"`.
+- **WHEN** the mouse enters its area.
+- **THEN** it should exhibit a background change to `rgba(0,0,0,0.03)` (or light grey).
+
+### Requirement: Static State Feedback
+
+- **GIVEN** a `SettingsItem` with `:clickable="false"`.
+- **WHEN** the mouse enters its area.
+- **THEN** its background should NOT change.
+- **AND** its cursor should be the default arrow, NOT the pointer.
+
+### Requirement: Dark Mode Integrity
+
+- **GIVEN** the application is in dark mode.
+- **WHEN** hovering a clickable `SettingsItem`.
+- **THEN** it should use `rgba(255, 255, 255, 0.05)` for its hover background.
 
 ## REMOVED Requirements
 

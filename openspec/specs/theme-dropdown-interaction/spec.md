@@ -21,7 +21,33 @@ O sistema DEVE abrir automaticamente o dropdown de seleção de tema quando o us
 - **WHEN** usuário seleciona uma opção de tema no dropdown
 - **THEN** o dropdown deve fechar
 - **AND** o tema deve mudar para o modo selecionado
+- **AND** o tema deve mudar para o modo selecionado
 - **AND** o dropdown deve continuar funcionando em cliques subsequentes
+
+### Requirement: Detach-Free Interactions
+- **WHEN** user has the `BaseSelect` (dropdown) menu open.
+- **AND** they scroll any parent container (such as the `scroll-container`).
+- **THEN** the menu must immediately close to prevent detached UI elements.
+
+### Requirement: Scroll Target Awareness
+- **WHEN** opening the menu.
+- **THEN** the component should dynamically identify the scrolling parent using a reliable discovery method (like `getScrollTarget`) to ensure it works correctly in both `window` and internal container contexts.
+
+### Requirement: Resource Hygiene
+- **WHEN** the menu closes.
+- **THEN** any active scroll event listeners must be removed to avoid performance degradation.
+
+### Requirement: Harmonic Option Hover State
+- **WHEN** user moves their mouse over an option in the `BaseSelect` (dropdown) menu.
+- **THEN** the item's background MUST change to match the select's closed state: exactly `#f0f2f5` (Light) or `#2a2a2a` (Dark).
+
+### Requirement: Interaction Smoothness (Dropdown)
+- **WHEN** transitioning states in the dropdown menu.
+- **THEN** the background must transition over a duration of `0.2s` (200ms) for a premium, non-abrupt feeling.
+
+### Requirement: High-Contrast Dark Selection
+- **WHEN** in dark mode.
+- **THEN** the hover background SHOULD be distinct enough from the menu's background to ensure clear visual feedback without losing text legibility.
 
 ### Requirement: Indicador visual de dropdown interativo
 

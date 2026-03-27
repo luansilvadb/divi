@@ -19,15 +19,30 @@ Define the functional and behavioral requirements for the new "Advanced Settings
 ### Requirement: Displaying Advanced Settings Layout
 - **GIVEN** the user is on the Advanced Settings page
 - **WHEN** the page is loaded
-- **THEN** it MUST display three main categories: `Estilo`, `Transações`, and `Contas`
-- **AND** it MUST include the following controls:
-  - `Altura do cabeçalho`: Select (Option: Alto)
-  - `Estilo de ícone`: Select (Option: Arredondado)
-  - `Fonte`: Select (Option: Padrão)
-  - `Animações`: Select (Option: Todos)
-  - `Animação numérica`: Select (Option: Conte)
-  - `Aumentar o contraste de texto`: Toggle
-  - `Resumo dos gastos mensais`: Toggle
+- **THEN** it MUST display four main categories: `ESTILO`, `TRANSAÇÕES`, `CONTAS`, and `ORÇAMENTOS`
+- **AND** each section MUST be wrapped in entry animations.
+
+### Requirement: Section ESTILO Items
+- **Fonte**: Icon `font_download`, Title "Fonte", Side template with `q-badge` labeled "Padrão".
+- **Animações**: Icon `animation`, Title "Animações", Caption "Desativar animações pode melhorar o desempenho", Side template with `BaseSelect` (Option: Todos).
+- **Animação numérica**: Icon `123`, Title "Animação numérica", Side template with `BaseSelect` (Option: Conte).
+- **Aumentar o contraste de texto**: Icon `contrast`, Title "Aumentar o contraste de texto", Caption "Aumentar o contraste de texto mais leve", Side template with `q-toggle`.
+- **Altura do cabeçalho**: Title "Altura do cabeçalho", Side template with `BaseSelect` (Option: Alto).
+- **Estilo de ícone**: Title "Estilo de ícone", Side template with `BaseSelect` (Option: Arredondado).
+
+### Requirement: Section TRANSAÇÕES Items
+- **Transações de pagamento automático**: Icon `check_circle`, Title "Transações de pagamento automático", Caption "Marque as transações vencidas conforme pago".
+- **Data de pagamento**: Title "Data de pagamento", Side template with `BaseSelect` (Option: Data atual).
+- **Data Banner Total**: Title "Data Banner Total", Side template with `BaseSelect` (Option: Total do dia).
+- **Resumo dos gastos mensais**: Title "Resumo dos gastos mensais", Caption "Transações Página Banner de Fluxo de Caixa", Side template with `q-toggle`.
+
+### Requirement: Section CONTAS Items
+- **Rótulo da conta**: Icon `label`, Title "Rótulo da conta", Caption "Adicionar rótulo de conta para todas as transações", Side template with `q-toggle`.
+- **Taxas de câmbio**: Icon `currency_exchange`, Title "Taxas de câmbio", Clickable with chevron.
+- **Moeda primária**: Icon `account_balance_wallet`, Title "Moeda primária", Side row with `q-badge` labeled "BRL" and chevron.
+
+### Requirement: Section ORÇAMENTOS Items
+- **Tipo total do orçamento**: Icon `fullscreen_exit`, Title "Tipo total do orçamento", Caption "Restante total".
 
 ### Requirement: Dropdown Menu Aesthetics
 - **GIVEN** a Select component is active (opened)
@@ -41,3 +56,25 @@ Define the functional and behavioral requirements for the new "Advanced Settings
 - **WHEN** the user clicks the back button (Top-Left) OR presses the system back button
 - **THEN** the system MUST navigate back to the main settings page
 - **AND** the transition MUST reverse the hero effect if supported by the browser
+
+## UI Specification: Header (Sliver Header)
+
+### Requirement: Standard Sliver Header Behavior
+- **WHEN** user loads `AdvancedSettingsPage.vue`.
+- **THEN** the header appears expanded with a height of `160px`.
+- **WHEN** user scrolls down the page.
+- **THEN** the `SliverAppBar` should collapse smoothly towards a height of `56px`.
+- **WHEN** user returns to the top of the page.
+- **THEN** the `SliverAppBar` should expand back to `160px`.
+
+### Component Specification
+- **Component**: `PageContentLayout` wrapper around page content.
+- **Component**: `SliverAppBar` positioned in the `#header` slot.
+- **Title styling**: 
+    - Full Title: Bold, `text-h5`.
+    - Collapsed State: Standard title behavior as managed by `SliverAppBar`.
+- **Configuration Properties**:
+    - `expanded-height`: `160`
+    - `collapsed-height`: `56`
+    - `pinned`: `true`
+    - `show-spacer`: `false`

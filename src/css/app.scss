@@ -118,3 +118,26 @@ body.body--dark {
     }
   }
 }
+
+/* Global UI Utility Classes */
+.custom-scroll {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.dark-text-white {
+  body.body--dark & {
+    color: white !important;
+  }
+}
+
+.no-scroll-clipping {
+  overflow: visible !important;
+}
+
+.full-expansion-card {
+  overflow: visible !important;
+  z-index: 10;
+}

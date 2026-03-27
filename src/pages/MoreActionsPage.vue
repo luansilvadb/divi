@@ -1,15 +1,23 @@
 <template>
-  <q-page>
-    <SliverAppBar :expanded-height="160" :collapsed-height="56" pinned>
-      <template #title>
-        <div class="text-h5 text-weight-bold">Configurações</div>
+  <q-page class="more-actions-page-container">
+    <PageContentLayout>
+      <template #header="{ scrollElement }">
+        <SliverAppBar
+          :expanded-height="160"
+          :collapsed-height="56"
+          pinned
+          :scroll-target="scrollElement"
+          :show-spacer="false"
+        >
+          <template #title>
+            <div class="text-h5 text-weight-bold">{{ $t('settings.title') }}</div>
+          </template>
+          <template #actions>
+            <q-btn flat round icon="help_outline" class="header-action-btn" />
+          </template>
+        </SliverAppBar>
       </template>
-      <template #actions>
-        <q-btn flat round icon="help_outline" class="header-action-btn" />
-      </template>
-    </SliverAppBar>
 
-    <div class="q-pa-md max-width-container">
       <!-- Action Cards row -->
       <div class="row full-width q-col-gutter-md q-mb-lg">
         <div class="col-6">
@@ -20,18 +28,21 @@
         </div>
       </div>
 
+      <!-- Rest of the sections -->
       <div class="settings-sections">
-        <!-- TEMA -->
-        <div class="category-header text-overline q-px-sm q-mb-sm">TEMA</div>
-        <div class="section-card q-mb-xl">
-          <SettingsItem title="Cor de destaque" icon="palette" @click="showColorPicker = true">
+        <SettingsSection :title="$t('settings.sections.theme')">
+          <SettingsItem 
+            :title="$t('settings.items.accentColor.label')" 
+            icon="palette" 
+            @click="showColorPicker = true"
+          >
             <template #side>
               <div class="current-color-indicator" :style="{ backgroundColor: accentColor }" />
             </template>
           </SettingsItem>
 
           <SettingsItem
-            title="Modo de tema"
+            :title="$t('settings.items.themeMode.label')"
             icon="brightness_6"
             :clickable="false"
             class="theme-mode-item"
@@ -39,25 +50,20 @@
             <template #side>
               <BaseSelect
                 v-model="themeMode"
-                :options="[
-                  { label: 'Claro', value: 'light' },
-                  { label: 'Escuro', value: 'dark' },
-                  { label: 'Sistema', value: 'auto' },
-                ]"
+                :options="themeOptions"
                 emit-value
                 map-options
               />
             </template>
           </SettingsItem>
-        </div>
+        </SettingsSection>
 
-        <!-- PREFERÊNCIAS -->
-        <div class="category-header text-overline text-grey-7 q-px-sm q-mb-sm">PREFERÊNCIAS</div>
-        <div class="section-card q-mb-xl">
-          <SettingsItem title="Editar página inicial" icon="home" show-chevron />
-          <SettingsItem title="Idioma" icon="language" @click="showLanguagePicker = true">
+        <SettingsSection :title="$t('settings.sections.preferences')">
+          <SettingsItem :title="$t('settings.items.editHome.label')" icon="home" show-chevron />
+          
+          <SettingsItem :title="$t('settings.items.language.label')" icon="language" @click="showLanguagePicker = true">
             <template #caption>
-              Escolha o idioma preferido para a interface do Cashew.
+              {{ $t('settings.items.language.caption') }}
               <a href="#" @click.prevent>Saiba mais sobre idiomas</a>
             </template>
             <template #side>
@@ -68,64 +74,34 @@
               </div>
             </template>
           </SettingsItem>
-          <div class="relative-position full-width" style="min-height: 64px">
+
+          <!-- Botão Expandível (Hero) -->
+          <div class="relative-position q-mx-sm q-my-xs" style="min-height: 60px">
             <Motion
               as="div"
               layoutId="settings-hero-bg"
-              :transition="{ type: 'spring', stiffness: 300, damping: 30 }"
+              :transition="{ type: 'spring', stiffness: 600, damping: 48, mass: 1 }"
               class="absolute-full settings-expansion-bg"
               style="border-radius: 12px; z-index: 0"
             />
-            <Motion
-              as="div"
-              :while-tap="{ scale: 0.98 }"
-              class="relative-position"
-              style="z-index: 1"
-            >
+            <div class="relative-position" style="z-index: 1">
               <SettingsItem
-                title=""
-                caption="Estilo, transações, contas, formatação"
+                :title="$t('settings.advanced')"
+                :caption="$t('settings.items.font.label') + ', ' + $t('settings.sections.transactions').toLowerCase() + ', ' + $t('settings.sections.accounts').toLowerCase()"
+                icon="tune"
                 show-chevron
                 @click="goToAdvanced"
-                style="background: transparent !important"
-              >
-                <template #title>
-                  <Motion
-                    as="div"
-                    layoutId="settings-hero-title"
-                    :transition="{ type: 'spring', stiffness: 300, damping: 30 }"
-                    class="text-subtitle2 text-weight-bold text-grey-9 dark-text-white"
-                  >
-                    Mais opções
-                  </Motion>
-                </template>
-                <template #icon>
-                  <Motion
-                    as="div"
-                    layoutId="settings-hero-icon"
-                    :transition="{ type: 'spring', stiffness: 300, damping: 30 }"
-                  >
-                    <q-icon name="tune" color="grey-7" size="sm" />
-                  </Motion>
-                </template>
-              </SettingsItem>
-            </Motion>
+                style="margin: 0 !important"
+              />
+            </div>
           </div>
-        </div>
+        </SettingsSection>
 
-        <!-- FERRAMENTAS E EXTRAS -->
-        <div class="category-header text-overline text-grey-7 q-px-sm q-mb-sm">
-          FERRAMENTAS E EXTRAS
-        </div>
-        <div class="section-card q-mb-xl">
+        <SettingsSection :title="$t('settings.sections.tools')">
           <SettingsItem title="Bill Splitter" icon="restaurant" show-chevron />
-        </div>
+        </SettingsSection>
 
-        <!-- IMPORTAR E EXPORTAR -->
-        <div class="category-header text-overline text-grey-7 q-px-sm q-mb-sm">
-          IMPORTAR E EXPORTAR
-        </div>
-        <div class="section-card q-mb-xl">
+        <SettingsSection :title="$t('settings.sections.importExport')">
           <SettingsItem title="Exportar para CSV (.csv)" icon="file_download" />
           <SettingsItem title="Importar arquivo CSV" icon="upload_file">
             <template #caption
@@ -147,11 +123,9 @@
               </q-btn>
             </template>
           </SettingsItem>
-        </div>
+        </SettingsSection>
 
-        <!-- BACKUPS -->
-        <div class="category-header text-overline text-grey-7 q-px-sm q-mb-sm">BACKUPS</div>
-        <div class="section-card q-mb-xl">
+        <SettingsSection :title="$t('settings.sections.backups')">
           <SettingsItem title="Exportar arquivo de dados" icon="upload" />
           <SettingsItem title="Importar arquivo de dados" icon="download" />
           <SettingsItem title="Google Drive" icon="cloud" show-chevron>
@@ -160,7 +134,7 @@
               <a href="#" @click.prevent>Como funciona?</a></template
             >
           </SettingsItem>
-        </div>
+        </SettingsSection>
       </div>
 
       <ColorPickerBottomSheet
@@ -169,26 +143,30 @@
       />
       <CustomColorPickerBottomSheet v-model="showCustomColorPicker" />
       <LanguageBottomSheet v-model="showLanguagePicker" />
-    </div>
+    </PageContentLayout>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useUiStore } from 'src/stores/ui';
-import SliverAppBar from 'src/components/molecules/SliverAppBar.vue';
+import BaseSelect from 'src/components/atoms/BaseSelect.vue';
 import ActionCard from 'src/components/molecules/ActionCard.vue';
-import SettingsItem from 'src/components/molecules/SettingsItem.vue';
 import ColorPickerBottomSheet from 'src/components/molecules/ColorPickerBottomSheet.vue';
 import CustomColorPickerBottomSheet from 'src/components/molecules/CustomColorPickerBottomSheet.vue';
 import LanguageBottomSheet from 'src/components/molecules/LanguageBottomSheet.vue';
-import BaseSelect from 'src/components/atoms/BaseSelect.vue';
+import PageContentLayout from 'src/components/molecules/PageContentLayout.vue';
+import SettingsItem from 'src/components/molecules/SettingsItem.vue';
+import SettingsSection from 'src/components/molecules/SettingsSection.vue';
+import SliverAppBar from 'src/components/molecules/SliverAppBar.vue';
 import { storeToRefs } from 'pinia';
 import { Motion } from 'motion-v';
 
 const router = useRouter();
 const uiStore = useUiStore();
+const { t } = useI18n();
 const { accentColor } = storeToRefs(uiStore);
 
 const showColorPicker = ref(false);
@@ -205,68 +183,47 @@ const themeMode = computed({
   set: (val) => uiStore.setThemeMode(val),
 });
 
+const themeOptions = computed(() => [
+  { label: t('settings.options.theme.light'), value: 'light' },
+  { label: t('settings.options.theme.dark'), value: 'dark' },
+  { label: t('settings.options.theme.auto'), value: 'auto' },
+]);
+
 const { locale } = storeToRefs(uiStore);
 const currentLanguageLabel = computed(() => {
-  if (locale.value === 'auto') return 'Sistema';
+  if (locale.value === 'auto') return t('settings.options.theme.auto');
   if (locale.value === 'en-US') return 'English';
   if (locale.value === 'pt-BR') return 'Português';
   return locale.value;
 });
+
 </script>
 
 <style scoped lang="scss">
-.max-width-container {
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.settings-expansion-bg {
-  background: white;
-  border: 1px solid #f2f2f2;
-
-  body.body--dark & {
-    background: #1e1e1e;
-    border-color: #333;
-  }
-}
-
-.category-header {
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: #616161; // text-grey-7
-  transition: color 0.3s ease;
-
-  body.body--dark & {
-    color: #bdbdbd; // text-grey-5
-  }
-}
-
-.header-action-btn {
-  color: #616161;
-}
-
-body.body--dark .header-action-btn {
-  color: white;
-}
-
-.section-card {
-  background: white;
-  border-radius: 20px;
-  padding: 8px 0;
-  border: 1px solid #f2f2f2;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+.more-actions-page-container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  transition: all 0.3s ease;
+}
+
+// Action button specific styles
+.current-color-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #e0e0e0;
 
   body.body--dark & {
-    background: #1e1e1e;
-    border-color: #333;
-    box-shadow: none;
+    box-shadow: 0 0 0 1px #333;
   }
 }
 
 .language-pill {
-  border-radius: 12px;
+  border-radius: 8px;
+  font-weight: 600;
   background: #f1f3f4 !important;
 }
 
@@ -276,11 +233,11 @@ body.body--dark .language-pill {
 }
 
 .modelo-btn {
+  font-size: 0.75rem;
+  font-weight: 700;
   background: rgba(var(--q-primary), 0.08);
   border-radius: 8px;
   padding: 2px 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
 
   body.body--dark & {
     background: rgba(var(--q-primary), 0.2);
@@ -288,26 +245,13 @@ body.body--dark .language-pill {
   }
 }
 
-.dark-text-white {
-  body.body--dark & {
-    color: white !important;
-  }
-}
-
-.current-color-indicator {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.settings-expansion-bg {
+  background: white;
+  transition: background 0.3s ease;
+  z-index: -1 !important;
 
   body.body--dark & {
-    border-color: rgba(255, 255, 255, 0.2);
+    background: #1e1e1e;
   }
-}
-
-.theme-mode-item :deep(.settings-item:hover),
-body.body--dark .theme-mode-item :deep(.settings-item:hover) {
-  background-color: transparent !important;
 }
 </style>

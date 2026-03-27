@@ -4,13 +4,28 @@
 
 <script setup lang="ts">
 import { watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { useQuasar, setCssVar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import { useUiStore } from 'src/stores/ui';
 
 const $q = useQuasar();
+const router = useRouter();
 const { locale: i18nLocale } = useI18n();
 const uiStore = useUiStore();
+
+// Watch for route changes to determine direction automatically
+router.beforeEach((to, from) => {
+  const toDepth = to.path.split('/').filter(Boolean).length;
+  const fromDepth = from.path.split('/').filter(Boolean).length;
+  
+  // Se estivermos voltando para um nível superior (ex: /actions/advanced -> /actions)
+  if (toDepth < fromDepth || from.path.startsWith(to.path) && from.path !== to.path) {
+    uiStore.setNavDirection('backward');
+  } else if (toDepth > fromDepth) {
+    uiStore.setNavDirection('forward');
+  }
+});
 
 const applyTheme = (mode: 'light' | 'dark' | 'auto') => {
   if (mode === 'auto') {

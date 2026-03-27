@@ -23,3 +23,18 @@
 #### Scenario: Navigating from Bottom Nav
 - **WHEN** the user is on Mobile and clicks the "Mais" icon in the bottom navigation.
 - **THEN** it MUST navigate to the `/actions` page.
+
+### Requirement: Page Entry Consistency
+- **WHEN** opening any configuration page with an expanded `SliverAppBar`.
+- **THEN** the absolute vertical distance from the top of the viewport to the start of the first menu item (label, row, or card) must be exactly `240px`.
+- **THEN** this padding MUST be defined in the `PageContentLayout` molecule.
+- **THEN** the first element within the layout (e.g. `ActionCard` row or `CategoryLabel`) MUST NOT have any additional top margin relative to its container's padding-top.
+- **THEN** developers MUST NOT manually set `padding-top: 240px` in local CSS.
+
+### Requirement: Layout Normalization
+- **WHEN** on a screen wider than 700px.
+- **THEN** content must be centered and bound by a consistent `maxWidth: 700px` unless otherwise specified by the molecule's props.
+
+### Requirement: Scrollbar Invisibility
+- **WHEN** in a scroll container with the `.custom-scroll` class.
+- **THEN** the scrollbar MUST be hidden on both Chrome (WebKit) and Firefox (scrollbar-width).
